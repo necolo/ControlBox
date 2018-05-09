@@ -6,7 +6,7 @@
   "author": "Necolo Lv.C",
   "license": "MIT",
   "scripts": {
-    "doc": "typedoc --out doc --module commonjs src/"
+    "docs": "typedoc --out docs --module commonjs src/"
   },
   "dependencies": {
     "typescript": "^2.8.3"
