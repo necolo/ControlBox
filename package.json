@@ -5,6 +5,9 @@
   "repository": "https://github.com/Necolo/ControlBox.git",
   "author": "Necolo Lv.C",
   "license": "MIT",
+  "scripts": {
+    "doc": "typedoc --out doc --module commonjs src/"
+  },
   "dependencies": {
     "typescript": "^2.8.3"
   }
