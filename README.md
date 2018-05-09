@@ -2,7 +2,7 @@
 A convenient control box to adjust your values.
 
 # usage
-```
+```javascript
 const ControlBox = require('control-box');
 
 const box = new ControlBox();
