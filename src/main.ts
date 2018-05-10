@@ -1,4 +1,4 @@
-module.exports = class {
+class ControlBox {
     public element:HTMLElement;
 
     constructor() {
@@ -117,3 +117,5 @@ module.exports = class {
         this.element.appendChild(box);
     }
 }
+
+module.exports = ControlBox;

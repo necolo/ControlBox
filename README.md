@@ -1,6 +1,8 @@
 # ControlBox
 A convenient control box to adjust your values.
 
+[API doc](https://necolo.github.io/ControlBox/modules/_main_.html)
+
 # usage
 ```javascript
 const ControlBox = require('control-box');
