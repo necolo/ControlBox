@@ -6,7 +6,7 @@
   "author": "Necolo Lv.C",
   "license": "MIT",
   "scripts": {
-    "docs": "typedoc --out docs --module commonjs src/",
+    "docs": "typedoc --out docs --module commonjs src/ && touch docs/.nojekyll",
     "publish": "tsc && npm publish"
   },
   "dependencies": {

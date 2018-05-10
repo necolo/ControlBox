@@ -1,4 +1,4 @@
-export class ControlBox {
+export default class {
     public element:HTMLElement;
 
     constructor() {
