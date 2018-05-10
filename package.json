@@ -1,6 +1,6 @@
 {
   "name": "control-box",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "main": "build/main.js",
   "repository": "https://github.com/Necolo/ControlBox.git",
   "author": "Necolo Lv.C",
