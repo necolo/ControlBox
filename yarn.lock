@@ -2,6 +2,10 @@
 # yarn lockfile v1
 
 
+"@types/node@^10.0.6":
+  version "10.0.6"
+  resolved "http://registry.npm.taobao.org/@types/node/download/@types/node-10.0.6.tgz#c0bce8e539bf34c1b850c13ff46bead2fecc2e58"
+
 typescript@^2.8.3:
   version "2.8.3"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.8.3.tgz#5d817f9b6f31bb871835f4edf0089f21abe6c170"

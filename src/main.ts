@@ -1,4 +1,4 @@
-export default class {
+module.exports = class {
     public element:HTMLElement;
 
     constructor() {

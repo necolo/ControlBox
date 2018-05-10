@@ -6,7 +6,7 @@
     "experimentalDecorators": true,
     "jsx": "react",
     "lib": ["dom", "es6"],
-    "module": "commonjs",
+    "module": "commonJS",
     "moduleResolution": "node",
     "noImplicitReturns": true,
     "noImplicitAny": false,
