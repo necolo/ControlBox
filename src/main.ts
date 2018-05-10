@@ -34,10 +34,14 @@ class ControlBox {
         min?:number,
         max:number,
         step?:number,
-        onChange:(value) => void,
+        onChange:(value:number) => void,
     }) {
         const input = document.createElement('input');
-        this._initElement(spec, input);
+        const box = this._initElement(spec, input);
+
+        const span = document.createElement('span');
+        span.style.color = 'white';
+        box.appendChild(span);
 
         const min = spec.min || 0;
         const max = spec.max;
@@ -49,12 +53,14 @@ class ControlBox {
         input.step = step.toString();
         input.onchange = (ev:any) => {
             if (ev.target && ev.target.value) {
-                return spec.onChange(ev.target.value);
+                span.innerText = ev.target.value
+                return spec.onChange(parseFloat(ev.target.value));
             }
         };
         input.oninput = (ev:any) => {
             if (ev.target && ev.target.value) {
-                return spec.onChange(ev.target.value);
+                span.innerText = ev.target.value;
+                return spec.onChange(parseFloat(ev.target.value));
             }
         };
     }
@@ -99,7 +105,7 @@ class ControlBox {
         this._initElement(spec, select);
     }
 
-    private _initElement (spec:any, actionElement:any) {
+    private _initElement (spec:any, actionElement:any) : HTMLElement {
         const box = document.createElement('div');
         const label = document.createElement('label');
 
@@ -115,6 +121,7 @@ class ControlBox {
         box.appendChild(label);
         box.appendChild(actionElement);
         this.element.appendChild(box);
+        return box;
     }
 }
 
