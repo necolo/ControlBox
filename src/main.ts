@@ -1,10 +1,30 @@
+interface RangeBoxSpecT_min {
+    min?:number;
+    max?:number;
+    step?:number;
+    initValue?:number;
+    turnBtn?:number;
+}
+
+interface RangeBoxSpecT_default extends RangeBoxSpecT_min {
+    label:string;
+    onChange:(value:number) => void;
+}
+
+interface RangeBoxSpecT_list_per extends RangeBoxSpecT_min {
+    onChange:(value:number) => void;
+}
+
+interface RangeBoxSpecT_list_multi extends RangeBoxSpecT_min {
+    label_prefix?:string;
+}
+
 class ControlBox {
     public element:HTMLElement;
 
     constructor() {
         const element = document.createElement('div');
         element.id = 'debugBox';
-        element.style.width = '250px';
         element.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
         element.style.position = 'fixed';
         element.style.left = '0';
@@ -29,40 +49,90 @@ class ControlBox {
         };
     }
 
-    public addRangeBox(spec:{
-        label:string,
-        min?:number,
-        max:number,
-        step?:number,
-        onChange:(value:number) => void,
-    }) {
+    public addRangeBox(spec:RangeBoxSpecT_default) {
         const input = document.createElement('input');
         const box = this._initElement(spec, input);
+
+        const min = (spec.min === undefined) ? -10 : spec.min; 
+        const max = (spec.max === undefined) ? 10 : spec.max;
+        const step = (spec.step === undefined) ? 0.01 : spec.step;
+        const value = (spec.initValue === undefined) ? (min + max) / 2 : spec.initValue;
+
+        if (spec.turnBtn) {
+            const plus = turnBtn('+', () => {
+                const value = (parseFloat(input.value) + spec.turnBtn!).toFixed(-Math.log10(step));
+                changeValue(value.toString());
+            });
+            const minus = turnBtn('-', () => {
+                const value = (parseFloat(input.value) - spec.turnBtn!).toFixed(-Math.log10(step));
+                changeValue(value.toString());
+            });
+            box.appendChild(plus);
+            box.appendChild(minus);
+        }
 
         const span = document.createElement('span');
         span.style.color = 'white';
         box.appendChild(span);
 
-        const min = spec.min || 0;
-        const max = spec.max;
-        const step = spec.step || 0.1;
-
         input.type = 'range';
         input.min = min.toString();
         input.max = max.toString();
         input.step = step.toString();
+        input.value = value.toString();
+        span.innerText = input.value;
         input.onchange = (ev:any) => {
             if (ev.target && ev.target.value) {
-                span.innerText = ev.target.value
-                return spec.onChange(parseFloat(ev.target.value));
+                changeValue(ev.target.value);
             }
         };
         input.oninput = (ev:any) => {
             if (ev.target && ev.target.value) {
-                span.innerText = ev.target.value;
-                return spec.onChange(parseFloat(ev.target.value));
+                changeValue(ev.target.value);
             }
         };
+
+        function changeValue (value:string) {
+            span.innerText = value;
+            spec.onChange(parseFloat(value));
+            input.value = value;
+        }
+
+        function turnBtn (name:string, onClick:() => void) : HTMLButtonElement {
+            const btn = document.createElement('button');
+            btn.innerText = name; 
+            btn.onclick = onClick;
+            return btn;
+        }
+    }
+
+    public addRangeBoxList (boxes:{
+        [label:string]: ((value:number) => void) | RangeBoxSpecT_list_per,
+    }, _spec?:RangeBoxSpecT_list_multi) {
+        const spec_multi:RangeBoxSpecT_default = {} as RangeBoxSpecT_default;
+
+        let prefix = '';
+        if (_spec) {
+            prefix = _spec.label_prefix || '';
+            updateObj(spec_multi, _spec, {
+                exclude: ['label_prefix'],
+            });
+        }
+
+        const boxLabels = Object.keys(boxes);
+        for (let i = 0; i < boxLabels.length; i ++) {
+            const label = boxLabels[i];
+            const specs = boxes[label];
+
+            const spec_per:RangeBoxSpecT_default = JSON.parse(JSON.stringify(spec_multi));
+            spec_per.label = prefix + label;
+            if (typeof specs === 'function') {
+                spec_per.onChange = specs;
+            } else {
+                updateObj(spec_per, specs);
+            }
+            this.addRangeBox(spec_per);
+        }
     }
 
     public addTextBox(spec:{
@@ -125,4 +195,14 @@ class ControlBox {
     }
 }
 
+function updateObj(original, target, option?:{exclude: string[]}) {
+    const props = Object.keys(target);
+    for (let i = 0; i < props.length; i ++) {
+        const id = props[i];
+        if (option && option.exclude && option.exclude.indexOf(id) > -1) {
+            continue;
+        } 
+        original[id] = target[id];
+    }
+}
 module.exports = ControlBox;
