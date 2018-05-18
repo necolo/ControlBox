@@ -2,11 +2,13 @@
   "name": "control-box",
   "version": "1.1.3",
   "main": "build/main.js",
+  "types": "build/main.d.ts",
   "repository": "https://github.com/Necolo/ControlBox.git",
   "author": "Necolo Lv.C",
   "license": "MIT",
   "scripts": {
     "docs": "typedoc --out docs --module commonjs src/ && touch docs/.nojekyll",
+    "watch": "tsc --watch",
     "pub": "tsc && npm publish"
   },
   "dependencies": {},

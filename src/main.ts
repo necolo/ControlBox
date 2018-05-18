@@ -1,4 +1,4 @@
-interface RangeBoxSpecT_min {
+export interface RangeBoxSpecT_min {
     min?:number;
     max?:number;
     step?:number;
@@ -6,21 +6,22 @@ interface RangeBoxSpecT_min {
     turnBtn?:number;
 }
 
-interface RangeBoxSpecT_default extends RangeBoxSpecT_min {
+export interface RangeBoxSpecT_default extends RangeBoxSpecT_min {
     label:string;
     onChange:(value:number) => void;
 }
 
-interface RangeBoxSpecT_list_per extends RangeBoxSpecT_min {
+export interface RangeBoxSpecT_list_per extends RangeBoxSpecT_min {
     onChange:(value:number) => void;
 }
 
-interface RangeBoxSpecT_list_multi extends RangeBoxSpecT_min {
+export interface RangeBoxSpecT_list_multi extends RangeBoxSpecT_min {
     label_prefix?:string;
 }
 
-class ControlBox {
+export class ControlBox {
     public element:HTMLElement;
+    private _contexts:{} = {};
 
     constructor() {
         const element = document.createElement('div');
@@ -32,6 +33,14 @@ class ControlBox {
         document.body.appendChild(element);
 
         this.element = element;
+    }
+
+    public setContext(name:string, data:any) {
+        this._contexts[name] = data;
+    }
+
+    public context(name:string) : any {
+        return this._contexts[name];
     }
 
     public addCheckBox (spec:{
@@ -156,16 +165,25 @@ class ControlBox {
 
     public addSelectBox(spec:{
         label:string,
-        options:string[],
+        options:(string|number|boolean)[],
         onChange:(value) => void,
+        default?:string|number|boolean,
     }) {
-        const select = document.createElement('Select');
+        const select = document.createElement('select');
         spec.options.map((value) => {
             const option = document.createElement('option');
+            if (typeof value === 'number' || typeof value === 'boolean') {
+                value = value.toString();;
+            } 
             option.value = value;
             option.innerText = value;
             select.appendChild(option);
         });
+
+        if (spec.default !== undefined) {
+            select.value = spec.default.toString();
+        } 
+
         select.onchange = (ev:any) => {
             if (ev.target && ev.target.value) {
                 spec.onChange(ev.target.value);
@@ -205,4 +223,3 @@ function updateObj(original, target, option?:{exclude: string[]}) {
         original[id] = target[id];
     }
 }
-module.exports = ControlBox;
