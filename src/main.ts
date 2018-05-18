@@ -21,7 +21,7 @@ export interface RangeBoxSpecT_list_multi extends RangeBoxSpecT_min {
 
 export class ControlBox {
     public element:HTMLElement;
-    private _contexts:{} = {};
+    public context:{} = {};
 
     constructor() {
         const element = document.createElement('div');
@@ -33,14 +33,6 @@ export class ControlBox {
         document.body.appendChild(element);
 
         this.element = element;
-    }
-
-    public setContext(name:string, data:any) {
-        this._contexts[name] = data;
-    }
-
-    public context(name:string) : any {
-        return this._contexts[name];
     }
 
     public addCheckBox (spec:{
