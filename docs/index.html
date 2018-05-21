@@ -68,19 +68,119 @@
 				<p>A convenient control box to adjust your values.</p>
 				<p><a href="https://necolo.github.io/ControlBox/modules/_main_.html">API doc</a></p>
 				<h1 id="usage">usage</h1>
-				<pre><code class="lang-javascript"><span class="hljs-keyword">const</span> ControlBox = <span class="hljs-built_in">require</span>(<span class="hljs-string">'control-box'</span>);
+				<h2 id="initialization">Initialization</h2>
+				<pre><code class="lang-js"><span class="hljs-keyword">const</span> ControlBox = <span class="hljs-built_in">require</span>(<span class="hljs-string">'control-box'</span>);
 
 <span class="hljs-keyword">const</span> box = <span class="hljs-keyword">new</span> ControlBox();
-
-box.addCheckBox({
-    <span class="hljs-attr">label</span>: <span class="hljs-string">'checkbox'</span>,
-    <span class="hljs-attr">onChange</span>: <span class="hljs-function">(<span class="hljs-params">checked</span>) =&gt;</span> {},
+</code></pre>
+				<h2 id="context">context</h2>
+				<p>ControlBox accepts context for saving local values:</p>
+				<pre><code class="lang-js">box.context[<span class="hljs-string">'test'</span>] = <span class="hljs-string">'hhh'</span>;
+</code></pre>
+				<h2 id="check-box">check box</h2>
+				<pre><code class="lang-javascript">box.addCheckBox({
+    <span class="hljs-attr">label</span>: <span class="hljs-string">'something'</span>,
+    <span class="hljs-attr">onChange</span>: <span class="hljs-function">(<span class="hljs-params">checked</span>) =&gt;</span> {
+        <span class="hljs-keyword">if</span> (checked) { ... }
+        <span class="hljs-keyword">else</span> { ... }
+    },
 });
-
-box.addRangeBox({
-    <span class="hljs-attr">label</span>: <span class="hljs-string">'range box'</span>,
-    <span class="hljs-attr">onChange</span>: <span class="hljs-function">(<span class="hljs-params">value</span>) =&gt;</span> {},
-});
+</code></pre>
+				<h2 id="range-box">range box</h2>
+				<p>Basic parameters:</p>
+				<pre><code class="lang-js">box.addRangeBox({
+    <span class="hljs-attr">label</span>: <span class="hljs-string">'something'</span>,
+    <span class="hljs-attr">onChange</span>: <span class="hljs-function">(<span class="hljs-params">value</span>) =&gt;</span> { ... }
+})
+</code></pre>
+				<p>Option parameters:</p>
+				<table>
+					<thead>
+						<tr>
+							<th>parameter</th>
+							<th>Description</th>
+							<th>Default</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>min</td>
+							<td>the minimum value of the rangebox</td>
+							<td>-10</td>
+						</tr>
+						<tr>
+							<td>max</td>
+							<td>the maximum value of the rangebox</td>
+							<td>10</td>
+						</tr>
+						<tr>
+							<td>step</td>
+							<td>the value&#39;s granularity</td>
+							<td>0.01</td>
+						</tr>
+						<tr>
+							<td>initValue</td>
+							<td>the value before u change the rangebox</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>turnBtn</td>
+							<td>add adjust buttons</td>
+							<td>undefined</td>
+						</tr>
+					</tbody>
+				</table>
+				<p><strong> notes: </strong></p>
+				<ul>
+					<li>turnBtn accepts a number, which defines the granularity when you click the button. </li>
+				</ul>
+				<h2 id="text-box">text box</h2>
+				<pre><code class="lang-js">box.addTextBox({
+    <span class="hljs-attr">label</span>: <span class="hljs-string">'something'</span>,
+    <span class="hljs-attr">onChange</span>: <span class="hljs-function">(<span class="hljs-params">value</span>) =&gt;</span> { ... }
+})
+</code></pre>
+				<h2 id="select-box">select box</h2>
+				<p>Basic parameters:</p>
+				<pre><code class="lang-js">box.addSelectBox({
+    <span class="hljs-attr">label</span>: <span class="hljs-string">'something'</span>,
+    <span class="hljs-attr">options</span>: [<span class="hljs-string">'select1'</span>, <span class="hljs-string">'select2'</span>, <span class="hljs-string">'select3'</span>, <span class="hljs-number">0.5</span>, <span class="hljs-number">10</span>, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>],
+    <span class="hljs-attr">onChange</span>: <span class="hljs-function">(<span class="hljs-params">value</span>) =&gt;</span> { ... },
+})
+</code></pre>
+				<p>Option parameters:</p>
+				<table>
+					<thead>
+						<tr>
+							<th>parameter</th>
+							<th>description</th>
+							<th>default</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>default</td>
+							<td>set the default value</td>
+							<td>undefined</td>
+						</tr>
+					</tbody>
+				</table>
+				<h2 id="add-a-list-of-boxes">add a list of boxes</h2>
+				<h3 id="a-list-of-range-boxes">a list of range boxes</h3>
+				<p><code>addRangeBoxList</code> needs two parameters: the spec of each range box, and the spec for all.<br>Each box can define as <code>label: onChange</code>, or <code>label: {}</code> for individual spec. </p>
+				<pre><code class="lang-js">box.addRangeBoxList ({
+    <span class="hljs-string">'box1'</span>: <span class="hljs-function">(<span class="hljs-params">value</span>) =&gt;</span> { ... },
+    <span class="hljs-string">'box2'</span>: {
+        <span class="hljs-attr">min</span>: <span class="hljs-number">1</span>,
+        <span class="hljs-attr">max</span>: <span class="hljs-number">10</span>,
+        <span class="hljs-attr">onChange</span>: <span class="hljs-function">(<span class="hljs-params">value</span>) =&gt;</span> { ... },
+    }
+}, {
+    <span class="hljs-attr">min</span>: <span class="hljs-number">-1</span>,
+    <span class="hljs-attr">max</span>: <span class="hljs-number">1</span>,
+    <span class="hljs-attr">step</span>: <span class="hljs-number">0.01</span>,
+    <span class="hljs-attr">turnBtn</span>: <span class="hljs-number">0.001</span>,
+})
 </code></pre>
 			</div>
 		</div>
