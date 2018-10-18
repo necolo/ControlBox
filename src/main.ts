@@ -92,8 +92,8 @@ export class ControlBox {
                 const value = (parseFloat(input.value) - spec.turnBtn!).toFixed(-Math.log10(step));
                 changeValue(value.toString());
             });
-            box.appendChild(plus);
             box.appendChild(minus);
+            box.appendChild(plus);
         }
 
         input.type = 'range';
