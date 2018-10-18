@@ -19,19 +19,27 @@ export interface RangeBoxSpecT_list_multi extends RangeBoxSpecT_min {
     label_prefix?:string;
 }
 
+export interface BoxSpec {
+    styles?:{[name:string]:string};
+}
+
 export class ControlBox {
     public element:HTMLElement;
     public context:{} = {};
 
-    constructor() {
+    constructor(spec:BoxSpec = {}) {
         const element = document.createElement('div');
         element.id = 'debugBox';
-        element.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-        element.style.position = 'fixed';
-        element.style.left = '0';
-        element.style.bottom = '48px';
-        document.body.appendChild(element);
 
+        const defaultStyles = {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            position: 'fixed',
+            left: '0',
+            bottom: '48px',
+        }
+        Object.assign(element.style, spec.styles || defaultStyles);
+
+        document.body.appendChild(element);
         this.element = element;
     }
 
@@ -59,11 +67,13 @@ export class ControlBox {
         const step = (spec.step === undefined) ? 0.01 : spec.step;
         const value = (spec.initValue === undefined) ? (min + max) / 2 : spec.initValue;
 
+        // add turn buttons
         if (spec.turnBtn) {
             const plus = turnBtn('+', () => {
                 const value = (parseFloat(input.value) + spec.turnBtn!).toFixed(-Math.log10(step));
                 changeValue(value.toString());
             });
+            plus.style.marginLeft = '2px';
             const minus = turnBtn('-', () => {
                 const value = (parseFloat(input.value) - spec.turnBtn!).toFixed(-Math.log10(step));
                 changeValue(value.toString());
@@ -72,16 +82,23 @@ export class ControlBox {
             box.appendChild(minus);
         }
 
-        const span = document.createElement('span');
-        span.style.color = 'white';
-        box.appendChild(span);
+        const numberInput = document.createElement('input');
+        numberInput.type = 'number';
+        numberInput.onchange = (ev:any) => {
+            if (ev.target && ev.target.value) {
+                changeValue(ev.target.value);
+            }
+        }
+        numberInput.style.marginLeft = '2px';
+        numberInput.style.width = '50px';
+        box.appendChild(numberInput);
 
         input.type = 'range';
         input.min = min.toString();
         input.max = max.toString();
         input.step = step.toString();
         input.value = value.toString();
-        span.innerText = input.value;
+        numberInput.value = input.value;
         input.onchange = (ev:any) => {
             if (ev.target && ev.target.value) {
                 changeValue(ev.target.value);
@@ -94,9 +111,9 @@ export class ControlBox {
         };
 
         function changeValue (value:string) {
-            span.innerText = value;
             spec.onChange(parseFloat(value));
             input.value = value;
+            numberInput.value = value;
         }
 
         function turnBtn (name:string, onClick:() => void) : HTMLButtonElement {

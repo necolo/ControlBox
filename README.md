@@ -51,9 +51,10 @@ min | the minimum value of the rangebox | -10
 max | the maximum value of the rangebox | 10
 step | the value's granularity | 0.01
 initValue | the value before u change the rangebox |  
-turnBtn | add adjust buttons | undefined
+turnBtn | add adjust buttons | undefined 
+inputBox | add an input number box | false
 
-** notes: **
+**notes:**
 - turnBtn accepts a number, which defines the granularity when you click the button. 
 
 ## text box
