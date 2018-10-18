@@ -136,18 +136,21 @@ box.addRangeBoxList ({
 ## auto add boxes from an object
 ```js
 const test = {
-    forBoolean: true,
-    forNumber: 10,
-    forString: 'foo',
+    forBoolean: true, // will insert check box
+    forNumber: 10, // will insert range box
+    forString: 'foo', // will insert text box
 };
 
 box.auto(test);
 // or with the spec
 box.auto(test, {
-    forNumber: {
-        min: -1,
-        max: 1,
-        step: 0.1,
-    }
+    spec:
+        forNumber: {
+            min: -1,
+            max: 1,
+            step: 0.1,
+        },
+    blacklist: ['forString'], // you can set blacklist
+    whitelist: ['forNumber'], // or instead, you can set a whitelist
 })
 ```

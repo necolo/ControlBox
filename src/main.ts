@@ -269,12 +269,25 @@ export class ControlBox {
         }
     }
 
-    public auto (obj:{[label:string]:any}, specs:{[label:string]:any} = {}) {
+    public auto (obj:{[label:string]:any}, {specs = {}, blacklist, whitelist}:{
+        specs?:{[label:string]:any},
+        blacklist?:string[],
+        whitelist?:string[],
+    }) {
+        if (!obj) { return; }
         const props = Object.keys(obj);
         for (let i = 0; i < props.length; i ++) {
             const label = props[i];
             const target = obj[label];
             const spec = specs[label] || {};
+
+            if (blacklist && blacklist.indexOf(label) >= 0) {
+                continue;
+            }
+
+            if (whitelist && whitelist.indexOf(label) < 0) {
+                continue;
+            }
 
             if (typeof target === 'number') {
                 // add range box
