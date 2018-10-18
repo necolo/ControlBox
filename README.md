@@ -7,8 +7,13 @@ A convenient control box to adjust your values.
 
 ## Initialization 
 ```js
-const ControlBox = require('control-box');
+const ControlBox = require('control-box').ControlBox;
+const box = new ControlBox();
+```
 
+or with es6:
+```js
+import { ControlBox } from 'control-box';
 const box = new ControlBox();
 ```
 
