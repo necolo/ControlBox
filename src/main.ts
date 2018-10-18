@@ -2,7 +2,7 @@ export interface RangeBoxSpecT_min {
     min?:number;
     max?:number;
     step?:number;
-    initValue?:number;
+    default?:number;
     turnBtn?:number;
 }
 
@@ -47,11 +47,13 @@ export class ControlBox {
     public addCheckBox (spec:{
         label:string,
         onChange:(checked:boolean) => void,
+        default?:boolean,
     }) {
         const input = document.createElement('input');
         this._initElement(spec.label, input);
 
         input.type = 'checkbox';
+        input.checked = spec.default || false;
         input.onchange = (ev:any) => {
             if (ev.target) {
                 return spec.onChange(ev.target.checked);
@@ -66,7 +68,7 @@ export class ControlBox {
         const min = (spec.min === undefined) ? -10 : spec.min; 
         const max = (spec.max === undefined) ? 10 : spec.max;
         const step = (spec.step === undefined) ? 0.01 : spec.step;
-        const value = (spec.initValue === undefined) ? (min + max) / 2 : spec.initValue;
+        const value = (spec.default === undefined) ? (min + max) / 2 : spec.default;
 
         const numberInput = document.createElement('input');
         numberInput.type = 'number';
@@ -156,11 +158,13 @@ export class ControlBox {
 
     public addTextBox(spec:{
         label:string,
+        default?:string,
         onChange:(value:string) => void,
     }) {
         const input = document.createElement('input');
         this._initElement(spec.label, input);
         input.type = 'text';
+        input.value = spec.default || '';
 
         let value = input.value;
         setInterval(
@@ -234,11 +238,11 @@ export class ControlBox {
             }
         }
 
-        function createNumberInput (onchange:(v:number) => void, initValue = 0) {
+        function createNumberInput (onchange:(v:number) => void, defaultValue = 0) {
             const numberInput = document.createElement('input');
             numberInput.type = 'number';
             numberInput.style.width = '45px';
-            numberInput.value = initValue.toString();
+            numberInput.value = defaultValue.toString();
             numberInput.onchange = _handleChange;
             numberInput.oninput = _handleChange;
             numberInput.style.marginLeft = '2px';
@@ -262,6 +266,44 @@ export class ControlBox {
                 color: [color[0] * range, color[1] * range, color[2] * range, color[3]],
                 hex: _hex || vec3ToColor(color),
             });
+        }
+    }
+
+    public auto (obj:{[label:string]:any}, specs:{[label:string]:any} = {}) {
+        const props = Object.keys(obj);
+        for (let i = 0; i < props.length; i ++) {
+            const label = props[i];
+            const target = obj[label];
+            const spec = specs[label] || {};
+
+            if (typeof target === 'number') {
+                // add range box
+                this.addRangeBox({
+                    label: spec.label || label,
+                    default: target,
+                    onChange: spec.onChange || ((v) => obj[label] = v),
+                    min: spec.min,
+                    max: spec.max,
+                    step: spec.step,
+                    turnBtn: spec.turnBtn || 0.1,
+                });
+            } else if (typeof target === 'string') {
+                // add text box
+                this.addTextBox({
+                    label: spec.label || label,
+                    onChange: spec.onChange || ((v) => obj[label] = v),
+                    default: target,
+                });
+            } else if (typeof target === 'boolean') {
+                // add checkbox
+                this.addCheckBox({
+                    label: spec.label || label,
+                    onChange: spec.onChange || ((v) => obj[label] = v),
+                    default: target,
+                });
+            } else if (typeof target === 'object') {
+
+            }
         }
     }
 

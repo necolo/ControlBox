@@ -41,6 +41,7 @@ box.context['test'] = 'hhh';
 ```javascript
 box.addCheckBox({
     label: 'something',
+    default: false, // optional
     onChange: (checked) => {
         if (checked) { ... }
         else { ... }
@@ -64,7 +65,7 @@ parameter | Description | Default
 min | the minimum value of the rangebox | -10
 max | the maximum value of the rangebox | 10
 step | the value's granularity | 0.01
-initValue | the value before u change the rangebox |  
+default | the value before u change the rangebox |  
 turnBtn | add adjust buttons | undefined 
 
 **notes:**
@@ -74,7 +75,8 @@ turnBtn | add adjust buttons | undefined
 ```js
 box.addTextBox({
     label: 'something',
-    onChange: (value) => { ... }
+    onChange: (value) => { ... },
+    default: '', // optional
 })
 ```
 
@@ -127,5 +129,25 @@ box.addRangeBoxList ({
     max: 1,
     step: 0.01,
     turnBtn: 0.001,
+})
+```
+
+
+## auto add boxes from an object
+```js
+const test = {
+    forBoolean: true,
+    forNumber: 10,
+    forString: 'foo',
+};
+
+box.auto(test);
+// or with the spec
+box.auto(test, {
+    forNumber: {
+        min: -1,
+        max: 1,
+        step: 0.1,
+    }
 })
 ```
