@@ -21,11 +21,12 @@ const box = new ControlBox();
 you can insert the specs when creating the control box:
 ```js
 const box = new ControlBox({
-    style: { // define the style
+    style: { // define the style, these are the default settings.
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
         position: 'fixed',
         top: '0',
         left: '0',
+        zIndex: '9999',
     }
 })
 ```
@@ -65,7 +66,6 @@ max | the maximum value of the rangebox | 10
 step | the value's granularity | 0.01
 initValue | the value before u change the rangebox |  
 turnBtn | add adjust buttons | undefined 
-inputBox | add an input number box | false
 
 **notes:**
 - turnBtn accepts a number, which defines the granularity when you click the button. 

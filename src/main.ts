@@ -36,6 +36,7 @@ export class ControlBox {
             position: 'fixed',
             left: '0',
             bottom: '48px',
+            zIndex: '9999',
         }
         Object.assign(element.style, spec.styles || defaultStyles);
 
