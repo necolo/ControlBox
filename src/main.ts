@@ -48,7 +48,7 @@ export class ControlBox {
         onChange:(checked:boolean) => void,
     }) {
         const input = document.createElement('input');
-        this._initElement(spec, input);
+        this._initElement(spec.label, input);
 
         input.type = 'checkbox';
         input.onchange = (ev:any) => {
@@ -60,12 +60,23 @@ export class ControlBox {
 
     public addRangeBox(spec:RangeBoxSpecT_default) {
         const input = document.createElement('input');
-        const box = this._initElement(spec, input);
+        const box = this._initElement(spec.label, input);
 
         const min = (spec.min === undefined) ? -10 : spec.min; 
         const max = (spec.max === undefined) ? 10 : spec.max;
         const step = (spec.step === undefined) ? 0.01 : spec.step;
         const value = (spec.initValue === undefined) ? (min + max) / 2 : spec.initValue;
+
+        const numberInput = document.createElement('input');
+        numberInput.type = 'number';
+        numberInput.onchange = (ev:any) => {
+            if (ev.target && ev.target.value) {
+                changeValue(ev.target.value);
+            }
+        }
+        numberInput.style.marginLeft = '2px';
+        numberInput.style.width = '50px';
+        box.appendChild(numberInput);
 
         // add turn buttons
         if (spec.turnBtn) {
@@ -81,17 +92,6 @@ export class ControlBox {
             box.appendChild(plus);
             box.appendChild(minus);
         }
-
-        const numberInput = document.createElement('input');
-        numberInput.type = 'number';
-        numberInput.onchange = (ev:any) => {
-            if (ev.target && ev.target.value) {
-                changeValue(ev.target.value);
-            }
-        }
-        numberInput.style.marginLeft = '2px';
-        numberInput.style.width = '50px';
-        box.appendChild(numberInput);
 
         input.type = 'range';
         input.min = min.toString();
@@ -155,10 +155,10 @@ export class ControlBox {
 
     public addTextBox(spec:{
         label:string,
-        onChange:(value) => void,
+        onChange:(value:string) => void,
     }) {
         const input = document.createElement('input');
-        this._initElement(spec, input);
+        this._initElement(spec.label, input);
         input.type = 'text';
 
         let value = input.value;
@@ -175,7 +175,7 @@ export class ControlBox {
     public addSelectBox(spec:{
         label:string,
         options:(string|number|boolean)[],
-        onChange:(value) => void,
+        onChange:(value:any) => void,
         default?:string|number|boolean,
     }) {
         const select = document.createElement('select');
@@ -199,23 +199,85 @@ export class ControlBox {
             }
         };
 
-        this._initElement(spec, select);
+        this._initElement(spec.label, select);
     }
 
-    private _initElement (spec:any, actionElement:any) : HTMLElement {
+    public addColorBox (spec:{
+        label:string,
+        onChange:(res:{color:number[], hex:string}) => void,
+        range?:number, // 1, 15, 255
+    }) {
+        const colorInput = document.createElement('input');
+        const box = this._initElement(spec.label, colorInput);
+        colorInput.type = 'color';
+
+        const range = spec.range || 1;
+
+        const color = [0, 0, 0, 1];
+        const r = createNumberInput((v) => color[0] = v, color[0]);
+        const g = createNumberInput((v) => color[1] = v, color[1]);
+        const b = createNumberInput((v) => color[2] = v, color[2]);
+        const a = createNumberInput((v) => color[3] = v, color[3]);
+
+        colorInput.onchange = (ev:any) => {
+            if (ev.target && ev.target.value) {
+                console.log(ev.target.value);
+                const _color = colorToFloat(ev.target.value);
+                color[0] = _color[0];
+                color[1] = _color[1];
+                color[2] = _color[2];
+                r.value = (color[0] * range).toString();
+                g.value = (color[1] * range).toString();
+                b.value = (color[2] * range).toString();
+                handleChange(ev.target.value);
+            }
+        }
+
+        function createNumberInput (onchange:(v:number) => void, initValue = 0) {
+            const numberInput = document.createElement('input');
+            numberInput.type = 'number';
+            numberInput.style.width = '45px';
+            numberInput.value = initValue.toString();
+            numberInput.onchange = _handleChange;
+            numberInput.oninput = _handleChange;
+            numberInput.style.marginLeft = '2px';
+            box.appendChild(numberInput);
+
+            function _handleChange (ev:any) {
+                if (ev.target && ev.target.value) {
+                    let v = parseFloat(ev.target.value);
+                    v = Math.max(Math.min(range, v), 0);
+                    numberInput.value = v.toString();
+                    onchange(v / range);
+                    colorInput.value = vec3ToColor(color);
+                    handleChange();
+                }
+            }
+            return numberInput;
+        }
+
+        function handleChange (_hex?:string) {
+            spec.onChange({
+                color: [color[0] * range, color[1] * range, color[2] * range, color[3]],
+                hex: _hex || vec3ToColor(color),
+            });
+        }
+    }
+
+    private _initElement (label:string, actionElement:any) : HTMLElement {
         const box = document.createElement('div');
-        const label = document.createElement('label');
+        const labelEl = document.createElement('label');
 
         box.className = 'debugbox-action';
         box.style.width = '100%';
         box.style.margin = '10px';
 
-        label.innerText = spec.label;
-        label.style.color = 'white';
+        labelEl.innerText = label;
+        labelEl.style.color = 'white';
 
         actionElement.style.margin = '0 0 0 20px';
 
-        box.appendChild(label);
+        box.appendChild(labelEl);
         box.appendChild(actionElement);
         this.element.appendChild(box);
         return box;
@@ -231,4 +293,23 @@ function updateObj(original, target, option?:{exclude: string[]}) {
         } 
         original[id] = target[id];
     }
+}
+
+function floatToHex (x:number) {
+    const y = (Math.round(255 * x) | 0).toString(16);
+    if (y.length < 2) {
+        return '0' + y;
+    }
+    return y;
+}
+
+function vec3ToColor (x:number[]) {
+    return '#' + floatToHex(x[0]) + floatToHex(x[1]) + floatToHex(x[2]);
+}
+
+function colorToFloat (color:string) : [number, number, number] {
+    const r = parseInt(color.substring(1, 3), 16) / 255;
+    const g = parseInt(color.substring(3, 5), 16) / 255;
+    const b = parseInt(color.substring(5, 7), 16) / 255;
+    return [r, g, b];
 }

@@ -17,6 +17,19 @@ import { ControlBox } from 'control-box';
 const box = new ControlBox();
 ```
 
+## spec
+you can insert the specs when creating the control box:
+```js
+const box = new ControlBox({
+    style: { // define the style
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        position: 'fixed',
+        top: '0',
+        left: '0',
+    }
+})
+```
+
 ## context
 ControlBox accepts context for saving local values:
 ```js
@@ -81,6 +94,18 @@ parameter | description | default
 --- | --- | ---
 default | set the default value | undefined
 
+## color box
+Give a color input and RGBA number input fields.
+```js
+box.addColorBox({
+    label: 'something',
+    range: 1, // could also be 15 or 255
+    onChange: (res) => {
+        console.log(res.color); // [0, 0, 0, 1]
+        console.log(res.hex); // '#000000'
+    }
+});
+```
 
 ## add a list of boxes
 
@@ -91,13 +116,13 @@ Each box can define as `label: onChange`, or `label: {}` for individual spec.
 
 ```js
 box.addRangeBoxList ({
-    'box1': (value) => { ... },
-    'box2': {
+    box1: (value) => { ... },
+    box2: {
         min: 1,
         max: 10,
         onChange: (value) => { ... },
     }
-}, {
+}, { // here set the default specs for all range boxes.
     min: -1,
     max: 1,
     step: 0.01,

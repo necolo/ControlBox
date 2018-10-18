@@ -8,5 +8,12 @@ box.addRangeBox({
         console.log('range box', value);
     },
     turnBtn: 0.1,
-    inputBox: true,
 });
+
+box.addColorBox({
+    label: 'color box',
+    onChange: (v) => {
+        console.log(v);
+    },
+    range: 1,
+})
